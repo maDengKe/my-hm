@@ -11,6 +11,7 @@
       v-model="username"
       :rule="/^1\d{4,10}$/"
       message="用户名格式不对"
+      ref="username"
     ></hm-input>
 
     <hm-input
@@ -19,9 +20,15 @@
       v-model="password"
       :rule="/^\d{3,12}$/"
       message="用户密码格式错误"
+      ref="password"
     ></hm-input>
 
     <hm-button @click="login">登录</hm-button>
+    <div class="tips">
+      还没有注册？点击这里
+      <router-link to="/register">注册</router-link>
+    </div>
+    <div class="test" ref="a"></div>
   </div>
 </template>
 
@@ -32,22 +39,32 @@ export default {
     // 如果给组件去注册事件，通过DOM是无法触发。而是通过 this.$emit触发
     login() {
       console.log('我要登录了')
-      this.$axios({
-        method: 'post',
-        url: '/login',
-        data: {
-          username: this.username,
-          password: this.password
-        }
-      }).then(res => {
-        console.log(res)
+      const flag1 = this.$refs.username.validated(this.username)
+      const flag2 = this.$refs.password.validated(this.password)
+      console.log(flag1, flag2)
 
-        if ((res.data.statusCode = 200)) {
-          this.$router.push('/user')
-        } else {
-          alert('傻逼，密码输错啦')
-        }
-      })
+      if (flag1 && flag2) {
+        this.$axios({
+          method: 'post',
+          url: '/login',
+          data: {
+            username: this.username,
+            password: this.password
+          }
+        })
+          .then(res => {
+            console.log(res)
+            if (res.data.statusCode == 200) {
+              this.$router.push('/user')
+              this.$toast.success('666，登录成功')
+            } else {
+              this.$toast.fail('不好意思，您登陆失败了')
+            }
+          })
+          .catch(res => {
+            console.log('登录错误')
+          })
+      }
     }
   },
   data() {
@@ -59,4 +76,9 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.tips {
+  margin: 20px;
+  text-align: right;
+}
+</style>
