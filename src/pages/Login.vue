@@ -38,42 +38,43 @@ export default {
     // 给DOM注册的事件，可以通过DOM的方式触发  给DOM元素注册点击事件，就可以点击触发
     // 如果给组件去注册事件，通过DOM是无法触发。而是通过 this.$emit触发
     login() {
-      console.log('我要登录了')
-      const flag1 = this.$refs.username.validated(this.username)
-      const flag2 = this.$refs.password.validated(this.password)
-      console.log(flag1, flag2)
+      console.log("我要登录了");
+      // ref: 组件调用组件内部的数据和方法，原生调用原生dom的方法和属性
+      const flag1 = this.$refs.username.validated(this.username);
+      const flag2 = this.$refs.password.validated(this.password);
+      console.log(flag1, flag2);
 
       if (flag1 && flag2) {
         this.$axios({
-          method: 'post',
-          url: '/login',
+          method: "post",
+          url: "/login",
           data: {
             username: this.username,
             password: this.password
           }
         })
           .then(res => {
-            console.log(res)
+            console.log(res);
             if (res.data.statusCode == 200) {
-              this.$router.push('/user')
-              this.$toast.success('666，登录成功')
+              this.$router.push("/user");
+              this.$toast.success("666，登录成功");
             } else {
-              this.$toast.fail('不好意思，您登陆失败了')
+              this.$toast.fail("不好意思，您登陆失败了");
             }
           })
           .catch(res => {
-            console.log('登录错误')
-          })
+            console.log("登录错误");
+          });
       }
     }
   },
   data() {
     return {
-      username: '',
-      password: ''
-    }
+      username: "",
+      password: ""
+    };
   }
-}
+};
 </script>
 
 <style scoped>
